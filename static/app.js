@@ -27,7 +27,10 @@ editor.on('change', function() {
   $('#preview').html(marked(editor.getValue()));
 });
 editor.selection.on('changeCursor', function() {
-  socket.emit('changeCursor', { socketId: socket.id, value: editor.getCursorPosition() });
+  console.log(fromSocket);
+  if (!fromSocket) {
+    socket.emit('changeCursor', { socketId: socket.id, value: editor.getCursorPosition() });
+  }
 });
 editor.commands.addCommand({
   name: 'saveFile',
@@ -40,21 +43,21 @@ editor.commands.addCommand({
 });
 
 socket.on('change', function(data) {
-  if (data.socketId != socket.id) {
+  if (data.socketId !== socket.id) {
     var oldSelection = editor.selection.getRange();
     var oldCursorPosition = editor.getCursorPosition();
     oldText = data.value;
     fromSocket = true;
     editor.setValue(data.value);
-    fromSocket = false;
     editor.clearSelection();
     editor.selection.setRange(oldSelection);
     editor.moveCursorToPosition(oldCursorPosition);
+    fromSocket = false;
   }
 });
 
 socket.on('diff', function(data) {
-  if (data.socketId != socket.id) {
+  if (data.socketId !== socket.id) {
     var oldSelection = editor.selection.getRange();
     var oldCursorPosition = editor.getCursorPosition();
     var patches = dmp.patch_fromText(data.diff);
@@ -62,19 +65,21 @@ socket.on('diff', function(data) {
     oldText = results[0];
     fromSocket = true;
     editor.setValue(results[0]);
-    fromSocket = false;
     editor.clearSelection();
     editor.selection.setRange(oldSelection);
     editor.moveCursorToPosition(oldCursorPosition);
+    fromSocket = false;
   }
 });
 socket.on('changeCursor', function(data) {
-  if (data.socketId == socket.id) {
+  if (data.socketId === socket.id) {
+    fromSocket = true;
     editor.moveCursorToPosition(data.value);
+    fromSocket = false;
   }
 });
 socket.on('changeRemoteCursor', function(data) {
-  if (data.socketId != socket.id) {
+  if (data.socketId !== socket.id) {
     updateRemoteCursor(data.socketId, data.value);
   }
 });
@@ -83,7 +88,7 @@ socket.on('names', function(names) {
   $('#connected').html('');
   for (var nameIdx in names) {
     var name = names[nameIdx];
-    if (name.socketId.split('#')[1] != socket.id) {
+    if (name.socketId.split('#')[1] !== socket.id) {
       addRemoteCursor(name.socketId.split('#')[1], name.colorId, name.name, name.cursorPosition);
       $('#connected').append('<span class="active ' + colors[name.colorId] + ' item">' + name.name + '</span>');
     }
@@ -138,9 +143,6 @@ marker.update = function(html, markerLayer, session, config) {
 marker.redraw = function() {
   this.session._signal('changeFrontMarker');
 }
-marker.addCursor = function() {
-  marker.redraw();
-}
 marker.session = editor.session;
 marker.session.addDynamicMarker(marker, true);
 
@@ -162,4 +164,5 @@ function updateRemoteCursor(socketId, cursorPosition) {
 function removeRemoteCursor(socketId) {
   marker.cursors[socketId] = null;
   delete marker.cursors[socketId];
+  marker.redraw();
 }
