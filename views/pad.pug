@@ -46,11 +46,12 @@ html
   body
     .ui.basic.modal
       .content(style="text-align: center;")
-        p You can collaborate with others by sharing your pad link.
-        .ui.label
+        h1 You can collaborate with others by sharing your pad link.
+        .ui.big.label
           i.linkify.icon
           code#copy-url=url + path
-        a.ui.label#copy-button Copy
+        a.ui.big.label#copy-button 
+          code Copy
     #editor(style="position: absolute; top: 0; right: 50%; left: 0; bottom: 31px;")
     .ui.mini.menu.bottom.fixed.inverted
       .menu#connected
