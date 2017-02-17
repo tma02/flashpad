@@ -2,6 +2,7 @@ var editor = ace.edit('editor');
 var socket = io(path);
 var dmp = new diff_match_patch();
 var fromSocket = false;
+var oldText = '';
 
 var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 
               'blue', 'violet', 'purple', 'pink', 'brown', 'grey'];
@@ -13,7 +14,15 @@ editor.setShowPrintMargin(false);
 
 editor.on('change', function() {
   if (!fromSocket) {
-    socket.emit('change', { socketId: socket.id, value: editor.getValue() });
+    var newText = editor.getValue();
+    var diff = dmp.diff_main(oldText, newText, true);
+    if (diff.length > 2) {
+      dmp.diff_cleanupSemantic(diff);
+    }
+    var patchList = dmp.patch_make(oldText, newText, diff);
+    patchText = dmp.patch_toText(patchList);
+    socket.emit('change', { socketId: socket.id, diff: patchText });
+    oldText = newText;
   }
   $('#preview').html(marked(editor.getValue()));
 });
@@ -33,6 +42,7 @@ editor.commands.addCommand({
 socket.on('change', function(data) {
   if (data.socketId != socket.id) {
     var oldCursorPosition = editor.getCursorPosition();
+    oldText = data.value;
     fromSocket = true;
     editor.setValue(data.value);
     fromSocket = false;
@@ -46,6 +56,7 @@ socket.on('diff', function(data) {
     var oldCursorPosition = editor.getCursorPosition();
     var patches = dmp.patch_fromText(data.diff);
     var results = dmp.patch_apply(patches, editor.getValue());
+    oldText = results[0];
     fromSocket = true;
     editor.setValue(results[0]);
     fromSocket = false;
@@ -68,9 +79,12 @@ socket.on('names', function(names) {
   $('#connected').html('');
   for (var nameIdx in names) {
     var name = names[nameIdx];
-    $('#connected').append('<span class="active ' + colors[name.colorId] + ' item">' + name.name + '</span>');
     if (name.socketId.split('#')[1] != socket.id) {
       addRemoteCursor(name.socketId.split('#')[1], name.colorId, name.name, name.cursorPosition);
+      $('#connected').append('<span class="active ' + colors[name.colorId] + ' item">' + name.name + '</span>');
+    }
+    else {
+      $('#connected').append('<span class="active ' + colors[name.colorId] + ' item"><i class="text cursor icon"></i>' + name.name + '</span>');
     }
   }
 });
@@ -97,7 +111,6 @@ marker.update = function(html, markerLayer, session, config) {
   var end = config.lastRow;
   var cursors = this.cursors;
   for (var i in cursors) {
-    console.log(this.cursors[i]);
     var pos = this.cursors[i].cursorPosition;
     var color = colors[this.cursors[i].colorId];
     if (pos.row < start) {
