@@ -8,6 +8,7 @@ var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal',
 editor.setTheme('ace/theme/monokai');
 editor.getSession().setMode('ace/mode/markdown');
 editor.$blockScrolling = Infinity;
+editor.setShowPrintMargin(false);
 
 editor.on('change', function() {
   if (!fromSocket) {
@@ -33,6 +34,32 @@ socket.on('change', function(data) {
     var oldCursorPosition = editor.getCursorPosition();
     fromSocket = true;
     editor.setValue(data.value);
+    fromSocket = false;
+    editor.clearSelection();
+    editor.moveCursorToPosition(oldCursorPosition);
+  }
+});
+
+socket.on('diff', function(data) {
+  if (data.socketId != socket.id) {
+    var oldCursorPosition = editor.getCursorPosition();
+    var result = editor.getValue();
+    var pos = 0;
+    var delta = data.diff;
+    for(var i = 0; i < delta.length; i++){
+      if(delta[i].added){
+        result = insertAt(result, pos, delta[i].value);
+        pos += delta[i].count;
+      }
+      else if (delta[i].removed) {
+        result = removeAt(result, pos, delta[i].count);
+      }
+      else {
+        pos += delta[i].count;
+      }
+    }
+    fromSocket = true;
+    editor.setValue(result);
     fromSocket = false;
     editor.clearSelection();
     editor.moveCursorToPosition(oldCursorPosition);
@@ -130,4 +157,12 @@ function updateRemoteCursor(socketId, cursorPosition) {
 function removeRemoteCursor(socketId) {
   marker.cursors[socketId] = null;
   delete marker.cursors[socketId];
+}
+
+function insertAt(str, index, add) {
+  return str.slice(0, index) + add + str.slice(index);
+}
+
+function removeAt(str, index, count) {
+  return str.slice(0, index) + str.slice(index + count);
 }
