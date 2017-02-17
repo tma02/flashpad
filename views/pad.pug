@@ -1,10 +1,24 @@
 html
   head
     title Flash Pad
+    link(rel="stylesheet", href="/semantic/semantic.min.css")
+  body
+    .ui.basic.modal
+      .content
+        p You can collaborate with others by sharing your pad link.
+        .ui.label
+          i.linkify.icon
+          code#copy-url=url + path
+        a.ui.label#copy-button Copy
+    #editor(style="position: absolute; top: 0; right: 0; left: 0; bottom: 31px;")
+    .ui.mini.menu.bottom.fixed.inverted
+      .menu#connected
+      .right.menu
+        a.item#share Share
+    script(src="/jquery/jquery.min.js")
+    script(src="/semantic/semantic.min.js")
     script(src="/ace/ace.js")
     script(src="/socket.io/socket.io.js")
-  body
-    #editor(style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;")
     script.
       var url='#{url}';
       var path='#{path}';
