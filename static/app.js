@@ -41,18 +41,21 @@ editor.commands.addCommand({
 
 socket.on('change', function(data) {
   if (data.socketId != socket.id) {
+    var oldSelection = editor.selection.getRange();
     var oldCursorPosition = editor.getCursorPosition();
     oldText = data.value;
     fromSocket = true;
     editor.setValue(data.value);
     fromSocket = false;
     editor.clearSelection();
+    editor.selection.setRange(oldSelection);
     editor.moveCursorToPosition(oldCursorPosition);
   }
 });
 
 socket.on('diff', function(data) {
   if (data.socketId != socket.id) {
+    var oldSelection = editor.selection.getRange();
     var oldCursorPosition = editor.getCursorPosition();
     var patches = dmp.patch_fromText(data.diff);
     var results = dmp.patch_apply(patches, editor.getValue());
@@ -61,6 +64,7 @@ socket.on('diff', function(data) {
     editor.setValue(results[0]);
     fromSocket = false;
     editor.clearSelection();
+    editor.selection.setRange(oldSelection);
     editor.moveCursorToPosition(oldCursorPosition);
   }
 });
