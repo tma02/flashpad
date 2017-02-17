@@ -1,6 +1,6 @@
 html
   head
-    title Flash Pad
+    title Flashpad
     link(rel="stylesheet", href="/semantic/semantic.min.css")
   body
     .ui.basic.modal
@@ -10,15 +10,19 @@ html
           i.linkify.icon
           code#copy-url=url + path
         a.ui.label#copy-button Copy
-    #editor(style="position: absolute; top: 0; right: 0; left: 0; bottom: 31px;")
+    #editor(style="position: absolute; top: 0; right: 50%; left: 0; bottom: 31px;")
     .ui.mini.menu.bottom.fixed.inverted
       .menu#connected
       .right.menu
         a.item#share Share
+    #preview(style="position: absolute; top: 0; right: 0; left: 50%; bottom: 31px; overflow: scroll; padding: 8px;")
+      div(style="text-align: center;")
+        | A preview of your markdown output will show up here.
     script(src="/jquery/jquery.min.js")
     script(src="/semantic/semantic.min.js")
     script(src="/ace/ace.js")
     script(src="/socket.io/socket.io.js")
+    script(src="/marked/marked.js")
     script.
       var url='#{url}';
       var path='#{path}';
