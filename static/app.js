@@ -2,6 +2,7 @@ var editor = ace.edit('editor');
 var socket = io(path);
 var dmp = new diff_match_patch();
 var fromSocket = false;
+var overrideLocalCursorPosition = false;
 var oldText = '';
 
 var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 
@@ -67,7 +68,10 @@ socket.on('diff', function(data) {
     editor.setValue(results[0]);
     editor.clearSelection();
     editor.selection.setRange(oldSelection);
-    editor.moveCursorToPosition(oldCursorPosition);
+    if (!overrideLocalCursorPosition) {
+      editor.moveCursorToPosition(oldCursorPosition);
+    }
+    overrideLocalCursorPosition = false;
     fromSocket = false;
   }
 });
@@ -75,6 +79,7 @@ socket.on('changeCursor', function(data) {
   if (data.socketId === socket.id) {
     fromSocket = true;
     editor.moveCursorToPosition(data.value);
+    overrideLocalCursorPosition = true;
     fromSocket = false;
   }
 });
@@ -146,17 +151,23 @@ marker.redraw = function() {
 marker.session = editor.session;
 marker.session.addDynamicMarker(marker, true);
 
+function updateLocalCursor(diffOriginSocketId) {
+  var cursor = marker.cursors[diffOriginSocketId];
+}
+
 function addRemoteCursor(socketId, colorId, name, cursorPosition) {
   var cursorObj = {};
   cursorObj.colorId = colorId;
   cursorObj.name = name;
   cursorObj.cursorPosition = cursorPosition;
+  cursorObj.cursorDelta = { row: 0, column: 0 };
   marker.cursors[socketId] = cursorObj;
   marker.redraw();
 }
 
 function updateRemoteCursor(socketId, cursorPosition) {
   var cursor = marker.cursors[socketId];
+  cursor.cursorDelta = { }
   cursor.cursorPosition = cursorPosition;
   marker.redraw();
 }
