@@ -2,15 +2,31 @@ html
   head
     title Flashpad
     link(rel="stylesheet", href="/semantic/semantic.min.css")
-  body
-    .ui.container(style="text-align: center; padding-top: calc(50vh - 120px); font-size: 1.5em;")
-      .ui.huge.header Flashpad
-      p Real-time collaborative Markdown editor. &#x26A1;&#xFE0F;&#x1F4DD;
-      a.ui.massive.button.right.labeled.icon(href="/pad/" + padId)
-        | Start Jotting
-        i.file.text.icon
-      br
-      br
-      a.ui.labeled.icon(href="https://github.com/tma02/flashpad/", target="_blank")
-        | GitHub
-        i.github.icon
+  body(style="background-color: #272822; overflow: hidden;")
+    div(style="font-size: 1.5em;")
+      div(style="position:absolute; top: 0; bottom: 0; left: 0; width: 50px; background-color: #2F3129;")
+      #editor(style="width: 100%; height: 272px; font-size: 1.4em; margin-top: calc(50vh - 237px);")
+        | Flashpad &#x26A1;&#xFE0F;&#x1F4DD;
+        | ===
+        |
+        | ### Real-time collaborative Markdown editor.
+        |
+        | * Collaborate on markdown documents in real-time
+        | * Edit markdown with live preview
+        | * Save and open documents through HTML5 LocalStorage
+      div(style="text-align: center; padding-top: 50px")
+        a.ui.massive.button.right.labeled.icon(href="/pad/" + padId)
+          | Start Jotting
+          i.file.text.icon
+        br
+        br
+        a.ui.labeled.icon(href="https://github.com/tma02/flashpad/", target="_blank")
+          | GitHub
+          i.github.icon
+    script(src="/ace/ace.js")
+    script.
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.session.setMode("ace/mode/markdown");
+      editor.setReadOnly(true);
+      editor.setShowPrintMargin(false);
