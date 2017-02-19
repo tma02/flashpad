@@ -16,6 +16,8 @@ var colorsHex = ['DB2828', 'F2711C', 'FBBD08', 'B5CC18', '21BA45', '00B5AD',
 
 var _names = {};
 var _selections = {};
+var _currentFileName = '';
+var _path = '/';
 
 // Ace configuration
 
@@ -30,7 +32,9 @@ editor.commands.addCommand({
     mac: 'Command-S',
     sender: 'editor|cli'
   },
-  exec: function(env, args, request) { }
+  exec: function(env, args, request) {
+    $('#save').trigger('click');
+  }
 });
 
 // Ace events
@@ -47,6 +51,7 @@ editor.on('change', function() {
     oldText = newText;
   }
   $('#preview').html(marked(editor.getValue()));
+  document.title = _currentFileName + '* | Flashpad';
 });
 editor.selection.on('changeCursor', function() {
   if (!fromSocket) {
@@ -114,10 +119,10 @@ socket.on('names', function(names) {
     _names[name.socketId] = name;
     if (name.socketId !== socket.id) {
       addRemoteCursor(name.socketId, name.colorId, name.name, name.cursorPosition);
-      $('#connected').append('<span class="active ' + colors[name.colorId] + ' item">' + name.name + '</span>');
+      $('#connected').prepend('<span class="active ' + colors[name.colorId] + ' item">' + name.name + '</span>');
     }
     else {
-      $('#connected').append('<span class="active ' + colors[name.colorId] + ' item"><i class="text cursor icon"></i>' + name.name + '</span>');
+      $('#connected').prepend('<span class="active ' + colors[name.colorId] + ' item"><i class="text cursor icon"></i>' + name.name + '</span>');
     }
   }
 });
@@ -126,8 +131,20 @@ socket.on('bye', function(socketId) {
 });
 
 // jQuery events
+$('#open').click(function() {
+  populateBrowserWindow(_path);
+  $('#browse').modal('show');
+});
+$('#save').click(function() {
+  if (_currentFileName == '') {
+    $('#save-as').modal('show');
+  }
+  else {
+    save(_currentFileName);
+  }
+});
 $('#share').click(function() {
-  $('.ui.modal').modal('show');
+  $('#collab-link').modal('show');
 });
 $('#copy-button').click(function() {
   var textArea = document.createElement('textarea');
@@ -136,6 +153,15 @@ $('#copy-button').click(function() {
   textArea.select();
   document.execCommand('copy');
   textArea.remove();
+});
+$('#save-btn').click(function() {
+  _currentFileName = $('#file-name').val() + '.md';
+  save(_currentFileName);
+});
+$('#file-name').on('keyup', function (e) {
+  if (e.keyCode == 13) {
+    $('#save-btn').trigger('click');
+  }
 });
 
 // Cursor sync logic
@@ -215,4 +241,100 @@ function updateRemoteCursor(socketId, cursorPosition) {
 function removeRemoteCursor(socketId) {
   delete marker.cursors[socketId];
   marker.redraw();
+}
+
+// File save/open logic
+initLocalStorage();
+
+function initLocalStorage() {
+  localStorage.paths = localStorage.paths || JSON.stringify({});
+  getPath('/');
+  localStorage.files = localStorage.files || JSON.stringify({});
+}
+
+function getPath(pathName) {
+  var paths = JSON.parse(localStorage.paths);
+  paths[pathName] = paths[pathName] || {
+    files: {}
+  };
+  localStorage.paths = JSON.stringify(paths);
+  return paths[pathName];
+}
+
+function getFile(pathName, name) {
+  var path = getPath(pathName);
+  var fileId = Object.keys(JSON.parse(localStorage.files)).length;
+  if (path.files[name] != undefined) {
+    return path.files[name].id;
+  }
+  path.files[name] = path.files[name] || {
+    id: fileId,
+    name: name
+  };
+  var paths = JSON.parse(localStorage.paths);
+  paths[pathName] = path;
+  localStorage.paths = JSON.stringify(paths);
+  var files = JSON.parse(localStorage.files);
+  files[fileId] = {
+    value: ''
+  };
+  localStorage.files = JSON.stringify(files);
+  return fileId;
+}
+
+function save() {
+  var fileId = getFile(_path, _currentFileName);
+  var path = getPath(_path);
+  var files = JSON.parse(localStorage.files);
+  files[fileId].value = editor.getValue();
+  localStorage.files = JSON.stringify(files);
+  document.title = _currentFileName + ' | Flashpad';
+}
+
+function populateBrowserWindow(pathName) {
+  var path = getPath(pathName);
+  $('#file-list').html('');
+  for (var fileName in path.files) {
+    var pathFile = path.files[fileName];
+    var file = JSON.parse(localStorage.files)[pathFile.id];
+    $('#file-list').append('<div class="item"><i class="middle aligned file text icon"></i><div class="content"><a class="header open-file" filename="' + pathFile.name + '">' + pathFile.name + '</a><div class="description"><a class="delete-file" filename="' + pathFile.name + '"><i class="trash icon"></i></a></div></div></div>');
+  }
+  $('.delete-file').click(function() {
+    var fileName = $(this).attr('filename');
+    $('#delete-confirm').modal({
+      allowMultiple: true,
+      onApprove: function() {
+        deleteFile(_path, fileName);
+        populateBrowserWindow(pathName);
+      }
+    });
+    $('#delete-confirm').modal('show');
+  });
+  $('.open-file').click(function() {
+    var fileName = $(this).attr('filename');
+    open(_path, fileName);
+    $('#browse').modal('hide');
+  });
+}
+
+function deleteFile(pathName, fileName) {
+  console.log(fileName);
+  var paths = JSON.parse(localStorage.paths);
+  var path = getPath(pathName);
+  var fileId = getFile(pathName, fileName);
+  var files = JSON.parse(localStorage.files);
+  delete files[fileId];
+  localStorage.files = JSON.stringify(files);
+  delete path.files[fileName];
+  paths[pathName] = path;
+  localStorage.paths = JSON.stringify(paths);
+}
+
+function open(pathName, fileName) {
+  var path = getPath(pathName);
+  var fileId = getFile(_path, fileName);
+  var files = JSON.parse(localStorage.files);
+  editor.setValue(files[fileId].value);
+  _currentFileName = fileName;
+  document.title = _currentFileName + ' | Flashpad';
 }

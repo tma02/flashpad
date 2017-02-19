@@ -44,7 +44,8 @@ html
         background: rgba(118,118,118, 0.5) !important;
       }
   body
-    .ui.basic.modal
+    .ui.basic.modal#collab-link
+      i.close.icon
       .content(style="text-align: center;")
         h1 You can collaborate with others by sharing your pad link.
         .ui.big.label
@@ -52,11 +53,44 @@ html
           code#copy-url=url + path
         a.ui.big.label#copy-button 
           code Copy
-    #editor(style="position: absolute; top: 0; right: 50%; left: 0; bottom: 31px;")
-    .ui.mini.menu.bottom.fixed.inverted
-      .menu#connected
-      .right.menu
+    .ui.modal#browse
+      i.close.icon
+      .content
+        h2 Open file
+      .actions(style="text-align: left;")
+        .ui.relaxed.divided.list#file-list
+          .item
+            i.middle.aligned.file.text.icon
+            .content
+              a.header file.md
+              .description 13 bytes
+                a
+                  i.trash.icon
+    .ui.small.modal#save-as
+      i.close.icon
+      .content
+        h2 Save as
+        .ui.right.labeled.fluid.input
+          input#file-name(type="text", placeholder="File name")
+          .ui.label
+            .text .md
+      .actions
+        .ui.positive.right.labeled.icon.button#save-btn Save
+          i.save.icon
+    .ui.small.modal#delete-confirm
+      .content
+        h2 Delete
+        | Are you sure you want to delete this file?
+      .actions
+        .ui.basic.cancel.button Cancel
+        .ui.red.ok.button Delete
+    #editor(style="position: absolute; top: 31px; right: 50%; left: 0; bottom: 0;")
+    .ui.mini.menu.top.fixed.inverted
+      .menu
+        a.item#open Open
+        a.item#save Save
         a.item#share Share
+      .right.menu#connected
     #preview(style="position: absolute; top: 0; right: 0; left: 50%; bottom: 31px; overflow: auto; padding: 8px;")
       div(style="text-align: center;")
         | A preview of your markdown output will appear here.
