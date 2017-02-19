@@ -57,7 +57,11 @@ editor.selection.on('changeCursor', function() {
   if (!fromSocket) {
     socket.emit('changeCursor', { socketId: socket.id, value: editor.getCursorPosition() });
   }
-  socket.emit('selectionRange', { socketId: socket.id, value: editor.selection.getRange() });
+});
+editor.session.on('changeBackMarker', function() {
+  if (!fromSocket) {
+    socket.emit('selectionRange', { socketId: socket.id, value: editor.selection.getRange() });
+  }
 });
 
 // Socket.io events
@@ -174,6 +178,7 @@ function updateRemoteSelection(socketId, colorId, range) {
     return;
   }
   range = new Range(range.start.row, range.start.column, range.end.row, range.end.column);
+  fromSocket = true;
   if (_selections[socketId] != undefined) {
     editor.session.getMarkers()[_selections[socketId]].range = range;
     editor.session._signal('changeBackMarker');
@@ -182,6 +187,7 @@ function updateRemoteSelection(socketId, colorId, range) {
     var marker = editor.session.addMarker(range, colors[colorId] + '-selection ace_selection', 'selection', false);
     _selections[socketId] = marker;
   }
+  fromSocket = false;
 }
 
 var marker = {};
