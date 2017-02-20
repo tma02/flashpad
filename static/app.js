@@ -7,6 +7,8 @@ var dmp = new diff_match_patch();
 var fromSocket = false;
 var overrideLocalCursorPosition = false;
 var oldText = '';
+var prodName = 'Flash';
+var saved = true;
 
 var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 
               'blue', 'violet', 'purple', 'pink', 'brown', 'grey'];
@@ -50,8 +52,8 @@ editor.on('change', function() {
     socket.emit('change', { socketId: socket.id, diff: patchText });
     oldText = newText;
   }
-  $('#preview').html(marked(editor.getValue()));
-  document.title = _currentFileName + '* | Flashpad';
+  document.title = _currentFileName + '* | ' + prodName;
+  saved = false;
 });
 editor.selection.on('changeCursor', function() {
   if (!fromSocket) {
@@ -135,6 +137,9 @@ socket.on('bye', function(socketId) {
 });
 
 // jQuery events
+$('#new').click(function() {
+  location.reload(true);
+});
 $('#open').click(function() {
   populateBrowserWindow(_path);
   $('#browse').modal('show');
@@ -165,6 +170,11 @@ $('#save-btn').click(function() {
 $('#file-name').on('keyup', function (e) {
   if (e.keyCode == 13) {
     $('#save-btn').trigger('click');
+  }
+});
+$(window).bind('beforeunload', function() {
+  if (!saved) {
+    return 'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';
   }
 });
 
@@ -294,7 +304,8 @@ function save() {
   var files = JSON.parse(localStorage.files);
   files[fileId].value = editor.getValue();
   localStorage.files = JSON.stringify(files);
-  document.title = _currentFileName + ' | Flashpad';
+  document.title = _currentFileName + ' | ' + prodName;
+  saved = true;
 }
 
 function populateBrowserWindow(pathName) {
@@ -342,5 +353,6 @@ function open(pathName, fileName) {
   var files = JSON.parse(localStorage.files);
   editor.setValue(files[fileId].value);
   _currentFileName = fileName;
-  document.title = _currentFileName + ' | Flashpad';
+  document.title = _currentFileName + ' | ' + prodName;
+  saved = true;
 }
