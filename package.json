@@ -15,6 +15,7 @@
     "express": "^4.14.1",
     "marked": "^0.3.6",
     "pug": "^2.0.0-beta11",
+    "reveal.js": "^3.4.1",
     "seedrandom": "^2.4.2",
     "semantic-ui-css": "^2.2.4",
     "sillyname": "^0.1.0",
