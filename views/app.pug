@@ -1,7 +1,6 @@
 html
   head
     title #{title}
-    link(rel="stylesheet", href="/semantic/semantic.min.css")
     style.
       .remote-cursor {
         position: absolute;
@@ -44,6 +43,7 @@ html
         background: rgba(118,118,118, 0.5) !important;
       }
     block head
+    link(rel="stylesheet", href="/semantic/semantic.min.css")
   body
     .ui.basic.modal#collab-link
       i.close.icon
