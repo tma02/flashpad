@@ -8,6 +8,13 @@ if (window.location.hash.substr(1) === 'present') {
   $('.progress').css('margin-left', '0');
 }
 
+$('#menu').append('<a class="item" id="present">Present</a>');
+
+$('#present').click(function() {
+  location.assign('#present');
+  location.reload();
+});
+
 Reveal.initialize({
   help: false,
   dependencies: [
