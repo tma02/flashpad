@@ -30,6 +30,7 @@ function setupPresentMode() {
   $('.progress').css('margin-left', '0');
   $('#present').html('Edit');
   location.hash = 'present';
+  Reveal.layout();
 }
 
 function setupEditMode() {
@@ -41,6 +42,7 @@ function setupEditMode() {
   $('.progress').css('margin-left', '50%');
   $('#present').html('Present');
   location.hash = '';
+  Reveal.layout();
 }
 
 $('#present').click(function() {
