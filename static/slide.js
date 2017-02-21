@@ -1,17 +1,26 @@
 prodName = 'Flashslide';
+var presentMode = false;
 
 if (window.location.hash.substr(1) === 'present') {
+  presentMode = true;
   $('#editor').css('width', '0');
   $('#preview').css('width', '100%');
   $('#preview').css('left', '0');
   $('.progress').css('width', '100%');
   $('.progress').css('margin-left', '0');
+  $('#menu').append('<a class="item" id="present">Edit</a>');
+}
+else {
+  $('#menu').append('<a class="item" id="present">Present</a>');
 }
 
-$('#menu').append('<a class="item" id="present">Present</a>');
-
 $('#present').click(function() {
-  location.assign('#present');
+  if (presentMode) {
+    location.hash = '';
+  }
+  else {
+    location.hash = 'present';
+  }
   location.reload();
 });
 

@@ -1,7 +1,7 @@
 // Definitions
 var editor = ace.edit('editor');
 var Range = ace.require('ace/range').Range;
-var socket = io(roomId);
+var socket = io('/' + roomId);
 var dmp = new diff_match_patch();
 
 var fromSocket = false;

@@ -3,10 +3,10 @@ html
     title Flashpad
     link(rel="stylesheet", href="/semantic/semantic.min.css")
   body(style="background-color: #272822; overflow: hidden;")
-    div(style="font-size: 1.5em;")
-      div(style="position:absolute; top: 0; bottom: 0; left: 0; width: 50px; background-color: #2F3129;")
-      #editor(style="width: 100%; height: 272px; font-size: 1.4em; margin-top: calc(50vh - 237px);")
-        | Flashpad &#x26A1;&#xFE0F;&#x1F4DD;
+    .ui.container(style="font-size: 1.5em; text-align: center;")
+      h1.ui.header.inverted(style="font-size: 4em; margin-top: calc(50vh - 237px);") FLASHPAD &#x26A1;&#xFE0F;&#x1F4DD;
+      #editor(style="width: 100%; height: 278px; font-size: 1.4em; border: 3px solid #2F3129;")
+        | Flashpad
         | ===
         |
         | ### Real-time collaborative Markdown editor.
@@ -14,10 +14,15 @@ html
         | * Collaborate on markdown documents in real-time
         | * Edit markdown with live preview
         | * Save and open documents through HTML5 LocalStorage
-      div(style="text-align: center; padding-top: 50px")
-        a.ui.massive.button.right.labeled.icon(href="/pad/" + padId)
+      div(style="text-align: center; padding-top: 20px")
+        a.ui.massive.inverted.button.right.labeled.icon(href="/pad/" + roomId)
           | Start Jotting
           i.file.text.icon
+        br
+        br
+        a.ui.labeled.icon(href="/slide/" + roomId, target="_blank")
+          | Presentations with Markdown
+          sup &beta;
         br
         br
         a.ui.labeled.icon(href="https://github.com/tma02/flashpad/", target="_blank")
