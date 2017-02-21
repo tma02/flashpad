@@ -49,6 +49,7 @@ html
       i.close.icon
       .content(style="text-align: center;")
         h1 You can collaborate with others by sharing your link.
+        p Links are deleted 10 minutes after the last collaborator leaves.
         .ui.big.label
           i.linkify.icon
           code#copy-url=url + path
@@ -103,5 +104,6 @@ html
     script.
       var url='#{url}';
       var roomId='#{roomId}';
+      var newId='#{newId}';
     script(src="/static/app.js")
     block scripts

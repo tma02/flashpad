@@ -138,7 +138,7 @@ socket.on('bye', function(socketId) {
 
 // jQuery events
 $('#new').click(function() {
-  location.reload(true);
+  location.assign(newId);
 });
 $('#open').click(function() {
   populateBrowserWindow(_path);
