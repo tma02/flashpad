@@ -1,7 +1,7 @@
 // Definitions
 var editor = ace.edit('editor');
 var Range = ace.require('ace/range').Range;
-var socket = io(path);
+var socket = io(roomId);
 var dmp = new diff_match_patch();
 
 var fromSocket = false;
@@ -10,10 +10,10 @@ var oldText = '';
 var prodName = 'Flash';
 var saved = true;
 
-var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 
+var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal',
               'blue', 'violet', 'purple', 'pink', 'brown', 'grey'];
 
-var colorsHex = ['DB2828', 'F2711C', 'FBBD08', 'B5CC18', '21BA45', '00B5AD', 
+var colorsHex = ['DB2828', 'F2711C', 'FBBD08', 'B5CC18', '21BA45', '00B5AD',
                 '2185D0', '6435C9', 'A333C8', 'E03997', 'A5673F', '767676'];
 
 var _names = {};

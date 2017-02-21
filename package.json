@@ -14,6 +14,7 @@
     "diff-match-patch": "^1.0.0",
     "express": "^4.14.1",
     "headjs": "^1.0.3",
+    "jquery": "^3.1.1",
     "marked": "^0.3.6",
     "pug": "^2.0.0-beta11",
     "reveal.js": "^3.4.1",
