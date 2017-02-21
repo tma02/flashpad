@@ -35,7 +35,7 @@ Reveal.initialize({
 
 editor.on('change', function() {
   $('.slides').html('');
-  var slides = editor.getValue().split('#HSLIDE');
+  var slides = editor.getValue().split('\n\n---\n\n');
   for (var slideIdx in slides) {
     var slide = slides[slideIdx];
     $('.slides').append('<section data-markdown><script type="text/template">' + slide + '</script></section>');
