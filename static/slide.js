@@ -1,28 +1,7 @@
 prodName = 'Flashslide';
 var presentMode = false;
 
-if (window.location.hash.substr(1) === 'present') {
-  presentMode = true;
-  $('#editor').css('width', '0');
-  $('#preview').css('width', '100%');
-  $('#preview').css('left', '0');
-  $('.progress').css('width', '100%');
-  $('.progress').css('margin-left', '0');
-  $('#menu').append('<a class="item" id="present">Edit</a>');
-}
-else {
-  $('#menu').append('<a class="item" id="present">Present</a>');
-}
-
-$('#present').click(function() {
-  if (presentMode) {
-    location.hash = '';
-  }
-  else {
-    location.hash = 'present';
-  }
-  location.reload();
-});
+$('#menu').append('<a class="item" id="present">Present</a>');
 
 Reveal.initialize({
   help: false,
@@ -31,6 +10,46 @@ Reveal.initialize({
     { src: '/reveal.js/plugin/markdown/markdown.js' },
     { src: '/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
   ]
+});
+
+Reveal.addEventListener('ready', function(event) {
+  if (window.location.hash.substr(1) === 'present') {
+    setupPresentMode();
+  }
+  else {
+    setupEditMode();
+  }
+});
+
+function setupPresentMode() {
+  presentMode = true;
+  $('#editor').css('width', '0');
+  $('#preview').css('width', '100%');
+  $('#preview').css('left', '0');
+  $('.progress').css('width', '100%');
+  $('.progress').css('margin-left', '0');
+  $('#present').html('Edit');
+  location.hash = 'present';
+}
+
+function setupEditMode() {
+  presentMode = false;
+  $('#editor').css('width', '50%');
+  $('#preview').css('width', '50%');
+  $('#preview').css('left', '50%');
+  $('.progress').css('width', '50%');
+  $('.progress').css('margin-left', '50%');
+  $('#present').html('Present');
+  location.hash = '';
+}
+
+$('#present').click(function() {
+  if (presentMode) {
+    setupEditMode();
+  }
+  else {
+    setupPresentMode();
+  }
 });
 
 editor.on('change', function() {
