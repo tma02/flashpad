@@ -61,9 +61,11 @@ editor.on('change', function() {
     var slide = slides[slideIdx];
     $('.slides').append('<section data-markdown><script type="text/template">' + slide + '</script></section>');
   }
-  RevealMarkdown.convertSlides();
-  var currentIdx = Reveal.getIndices();
-  Reveal.sync();
-  // TODO: move to slide the cursor is currently in
-  Reveal.slide(currentIdx.h, currentIdx.v);
+  if (Reveal != undefined && RevealMarkdown != undefined) {
+    RevealMarkdown.convertSlides();
+    var currentIdx = Reveal.getIndices();
+    Reveal.sync();
+    // TODO: move to slide the cursor is currently in
+    Reveal.slide(currentIdx.h, currentIdx.v);
+  }
 });

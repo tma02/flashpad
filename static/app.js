@@ -47,6 +47,7 @@ editor.on('change', function() {
     if (diff.length > 2) {
       dmp.diff_cleanupSemantic(diff);
     }
+    // TODO: handle malformed URI from stray unicode sequences (emoji)
     var patchList = dmp.patch_make(oldText, newText, diff);
     patchText = dmp.patch_toText(patchList);
     socket.emit('change', { socketId: socket.id, diff: patchText });
@@ -149,6 +150,7 @@ $('#save').click(function() {
     $('#save-as').modal('show');
   }
   else {
+    // TODO: warn user if overriding existing file
     save(_currentFileName);
   }
 });
