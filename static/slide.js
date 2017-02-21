@@ -3,6 +3,11 @@ var presentMode = false;
 
 $('#menu').append('<a class="item" id="present">Present</a>');
 
+document.addEventListener('webkitfullscreenchange', fullscreenChange, false);
+document.addEventListener('mozfullscreenchange', fullscreenChange, false);
+document.addEventListener('fullscreenchange', fullscreenChange, false);
+document.addEventListener('MSFullscreenChange', fullscreenChange, false);
+
 Reveal.initialize({
   help: false,
   dependencies: [
@@ -61,7 +66,7 @@ editor.on('change', function() {
     var slide = slides[slideIdx];
     $('.slides').append('<section data-markdown><script type="text/template">' + slide + '</script></section>');
   }
-  if (Reveal != undefined && RevealMarkdown != undefined) {
+  if (typeof Reveal !== undefined && typeof RevealMarkdown !== undefined) {
     RevealMarkdown.convertSlides();
     var currentIdx = Reveal.getIndices();
     Reveal.sync();
@@ -69,3 +74,12 @@ editor.on('change', function() {
     Reveal.slide(currentIdx.h, currentIdx.v);
   }
 });
+
+function fullscreenChange() {
+  if (presentMode && (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement != null)) {
+    $('#menubar').hide();
+  }
+  else {
+    $('#menubar').show();
+  }
+}

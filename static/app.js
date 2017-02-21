@@ -183,7 +183,7 @@ $(window).bind('beforeunload', function() {
 // Cursor sync logic
 function updateRemoteSelection(socketId, colorId, range) {
   if (range.start.row == range.end.row && range.start.column == range.end.column) {
-    if (_selections[socketId] != undefined) {
+    if (typeof _selections[socketId] !== undefined) {
       editor.session.removeMarker(_selections[socketId]);
       delete _selections[socketId];
     }
@@ -191,7 +191,7 @@ function updateRemoteSelection(socketId, colorId, range) {
   }
   range = new Range(range.start.row, range.start.column, range.end.row, range.end.column);
   fromSocket = true;
-  if (_selections[socketId] != undefined) {
+  if (typeof _selections[socketId] !== undefined) {
     editor.session.getMarkers()[_selections[socketId]].range = range;
     editor.session._signal('changeBackMarker');
   }
@@ -282,7 +282,7 @@ function getPath(pathName) {
 function getFile(pathName, name) {
   var path = getPath(pathName);
   var fileId = Object.keys(JSON.parse(localStorage.files)).length;
-  if (path.files[name] != undefined) {
+  if (typeof path.files[name] !== undefined) {
     return path.files[name].id;
   }
   path.files[name] = path.files[name] || {
