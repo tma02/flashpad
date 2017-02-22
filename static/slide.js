@@ -78,8 +78,12 @@ editor.on('change', function() {
 function fullscreenChange() {
   if (presentMode && (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement != null)) {
     $('#menubar').hide();
+    $('#menubar').css('height', '0');
+    $('#preview').css('top', '0');
   }
   else {
     $('#menubar').show();
+    $('#menubar').css('height', 'auto');
+    $('#preview').css('top', '31px');
   }
 }
