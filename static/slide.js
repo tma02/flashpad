@@ -68,7 +68,7 @@ editor.on('change', function() {
   for (var slideIdx in slides) {
     var slide = slides[slideIdx];
     slideLines += slide.split('\n').length + 3;
-    if (typeof revealIdx == undefined && cursorRow <= slideLines) {
+    if (revealIdx === undefined && cursorRow < slideLines) {
       revealIdx = slideIdx;
     }
     $('.slides').append('<section data-markdown><script type="text/template">' + slide + '</script></section>');
