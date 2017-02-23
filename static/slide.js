@@ -62,16 +62,23 @@ $('#present').click(function() {
 editor.on('change', function() {
   $('.slides').html('');
   var slides = editor.getValue().split('\n\n---\n\n');
+  var slideLines = 0;
+  var cursorRow = editor.getCursorPosition().row;
+  var revealIdx;
   for (var slideIdx in slides) {
     var slide = slides[slideIdx];
+    slideLines += slide.split('\n').length + 3;
+    if (cursorRow <= slideLines) {
+      revealIdx = slideIdx;
+    }
     $('.slides').append('<section data-markdown><script type="text/template">' + slide + '</script></section>');
   }
   if (typeof Reveal !== undefined && typeof RevealMarkdown !== undefined) {
     RevealMarkdown.convertSlides();
     var currentIdx = Reveal.getIndices();
+    revealIdx = revealIdx || currentIdx.h;
     Reveal.sync();
-    // TODO: move to slide the cursor is currently in
-    Reveal.slide(currentIdx.h, currentIdx.v);
+    Reveal.slide(revealIdx, currentIdx.v);
   }
 });
 

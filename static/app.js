@@ -150,7 +150,9 @@ $('#save').click(function() {
     $('#save-as').modal('show');
   }
   else {
-    // TODO: warn user if overriding existing file
+    if (fileExists(_path, _currentFileName)) {
+      // TODO: warn user if overriding existing file
+    }
     save(_currentFileName);
   }
 });
@@ -357,4 +359,9 @@ function open(pathName, fileName) {
   _currentFileName = fileName;
   document.title = _currentFileName + ' | ' + prodName;
   saved = true;
+}
+
+function fileExists(pathName, fileName) {
+  var path = getPath(pathName);
+  return Object.keys(path.files).indexOf(fileName) != -1;
 }
