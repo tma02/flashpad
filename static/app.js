@@ -284,7 +284,7 @@ function getPath(pathName) {
 function getFile(pathName, name) {
   var path = getPath(pathName);
   var fileId = Object.keys(JSON.parse(localStorage.files)).length;
-  if (typeof path.files[name] !== undefined) {
+  if (path.files[name] != undefined) {
     return path.files[name].id;
   }
   path.files[name] = path.files[name] || {
