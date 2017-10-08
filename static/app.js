@@ -193,7 +193,7 @@ function updateRemoteSelection(socketId, colorId, range) {
   }
   range = new Range(range.start.row, range.start.column, range.end.row, range.end.column);
   fromSocket = true;
-  if (typeof _selections[socketId] !== undefined) {
+  if (typeof _selections[socketId] !== 'undefined') {
     editor.session.getMarkers()[_selections[socketId]].range = range;
     editor.session._signal('changeBackMarker');
   }
