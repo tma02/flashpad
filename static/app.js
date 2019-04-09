@@ -21,6 +21,21 @@ var _selections = {};
 var _currentFileName = '';
 var _path = '/';
 
+// Util
+function escapeHtml(text) {
+  var entities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function(e) {
+    return entities[e];
+  });
+}
+
 // Ace configuration
 
 editor.setTheme('ace/theme/monokai');
