@@ -15,12 +15,12 @@ html
         | * Edit markdown with live preview
         | * Save and open documents through HTML5 LocalStorage
       div(style="text-align: center; padding-top: 20px")
-        a.ui.massive.inverted.button.right.labeled.icon(href="/pad/" + roomId)
+        a.ui.massive.inverted.button.right.labeled.icon(href=`/pad/${roomId}`)
           | Start Jotting
           i.file.text.icon
         br
         br
-        a.ui.labeled.icon(href="/slide/" + roomId, target="_blank")
+        a.ui.labeled.icon(href=`/slide/${roomId}`, target="_blank")
           | Presentations with Markdown
           sup &beta;
         br
