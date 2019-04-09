@@ -71,7 +71,7 @@ editor.on('change', function() {
     if (revealIdx === undefined && cursorRow < slideLines) {
       revealIdx = slideIdx;
     }
-    $('.slides').append('<section data-markdown><script type="text/template">' + slide + '</script></section>');
+    $('.slides').append('<section data-markdown><script type="text/template">' + filterXSS(slide) + '</script></section>');
   }
   if (typeof Reveal !== undefined && typeof RevealMarkdown !== undefined) {
     RevealMarkdown.convertSlides();
