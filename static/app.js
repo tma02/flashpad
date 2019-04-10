@@ -9,6 +9,7 @@ var overrideLocalCursorPosition = false;
 var oldText = '';
 var prodName = 'Flash';
 var saved = true;
+var updateCursor = false;
 
 var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal',
               'blue', 'violet', 'purple', 'pink', 'brown', 'grey'];
@@ -66,6 +67,12 @@ editor.on('change', function() {
     var patchList = dmp.patch_make(oldText, newText, diff);
     patchText = dmp.patch_toText(patchList);
     socket.emit('change', { socketId: socket.id, diff: patchText });
+    if (oldText.length > newText.length) {
+      socket.emit('updateCursor', { socketId: socket.id, value: editor.getCursorPosition(), postChange: false });
+    }
+    else {
+      updateCursor = true;
+    }
     oldText = newText;
   }
   document.title = _currentFileName + '* | ' + prodName;
@@ -73,7 +80,8 @@ editor.on('change', function() {
 });
 editor.selection.on('changeCursor', function() {
   if (!fromSocket) {
-    socket.emit('changeCursor', { socketId: socket.id, value: editor.getCursorPosition() });
+    socket.emit(updateCursor ? 'updateCursor' : 'changeCursor', { socketId: socket.id, value: editor.getCursorPosition(), postChange: true });
+    updateCursor = false;
   }
 });
 editor.session.on('changeBackMarker', function() {
